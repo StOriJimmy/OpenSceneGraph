@@ -747,6 +747,27 @@ int main( int argc, char **argv )
     bool enableObjectCache = false;
     while(arguments.read("--enable-object-cache")) { enableObjectCache = true; }
 
+	bool use_file_list = false;
+	while (arguments.read("-list", str)) {
+		
+		FILE* fp = fopen(str.c_str(), "r");
+		if (fp) {
+			char szBuf[1024];
+			while (fgets(szBuf, 1024, fp)) {
+				if (strlen(szBuf) == 0) {
+					break;
+				}
+				if (szBuf[strlen(szBuf) - 1] == '\n') {
+					szBuf[strlen(szBuf) - 1] = '\0';
+				}
+				fileNames.push_back(szBuf);
+			}
+
+			use_file_list = true;
+			fclose(fp);
+		}
+	}
+
     // any option left unread are converted into errors to write out later.
     arguments.reportRemainingOptionsAsUnrecognized();
 
